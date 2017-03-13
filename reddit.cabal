@@ -23,6 +23,7 @@ library
                       ,lens
                       ,lens-aeson
                       ,bytestring
+                      ,hjson-query
   default-language:    Haskell2010
 
 executable reddit-exe
