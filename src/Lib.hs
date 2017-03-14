@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Lib
     ( askForSub
     ) where
@@ -5,12 +7,14 @@ module Lib
 import Network.Wreq
 import Control.Lens
 import Data.Aeson
-import Data.Aeson.Lens (key, _String, nth)
-import Data.Aeson.Text (encodeToLazyText)
+import Data.Aeson.Lens
+import Data.Aeson.Text
 import Data.Map as Map
 import Data.ByteString.Lazy.Char8 as Char8
 import Data.Char (isSpace)
 import Text.HJson.Query
+
+import qualified Data.Text as T
 
 type Resp = Response (Map String Value)
 
@@ -19,17 +23,26 @@ askForSub = do
 	Prelude.putStrLn "Enter a Subreddit"
 	subreddit <- getLine
 	posts <- getPosts subreddit
-	Prelude.putStrLn posts
+	print posts
 
 getPosts :: String -> IO [Char]
 getPosts subreddit = do
 	let url = "https://www.reddit.com/r/" ++ subreddit ++ ".json"
 	r <- get url
-	let posts = Char8.unpack (r ^. responseBody)
-	let enc = encode (posts)
+--	let posts = Char8.unpack (r ^. responseBody)
+	let f1 = "data" :: T.Text
+	let f2 = "children" :: T.Text
+	let dat = r ^? responseBody . key f1
+	let fil = dat ^? key f2
+	let enc = encode dat
+	return $ Char8.unpack (enc)
+--	let fil = posts .key f2 :: (Value -> f Value) -> c
+--	return posts
+--	return $ Char8.unpack (posts)
+--	let enc = encode (posts)
 --	let filt = decode (enc)
-	let json = pputJson enc
-	return json
+--	let json = pputJson enc
+--	return json
 --	let filt = r ^? responseBody . key "url"
 --	let posts = Char8.unpack (filt)
 --	return filt
