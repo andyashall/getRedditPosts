@@ -32,8 +32,8 @@ getPosts subreddit = do
 --	let posts = Char8.unpack (r ^. responseBody)
 	let f1 = "data" :: T.Text
 	let f2 = "children" :: T.Text
-	let dat = r ^? responseBody . key f1
-	let fil = dat ^? key f2
+	let f3 = "title" :: T.Text
+	let dat = r ^? responseBody . key f1 . key f2 . key f3
 	let enc = encode dat
 	return $ Char8.unpack (enc)
 --	let fil = posts .key f2 :: (Value -> f Value) -> c
