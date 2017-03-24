@@ -1,4 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
 
 module Lib
     ( askForSub
@@ -33,12 +35,14 @@ getPosts subreddit = do
 	let f1 = "data" :: T.Text
 	let f2 = "children" :: T.Text
 	let f3 = "title" :: T.Text
-	let fil = r ^. responseBody ^.. key f1 . _Array . traverse 
+	let dat = r ^. responseBody
+	let dec = decode dat
+	let fil = dec ^.. key f1 . _Array . traverse 
                     . to (\o -> ( o ^?! key f2
+                                , o ^?  key f1
                                 , o ^?  key f3
                                 )
                          )
-	let dat = r ^? responseBody . key f1
 	let enc = encode fil
 	-- return enc
 	return $ Char8.unpack (enc)
