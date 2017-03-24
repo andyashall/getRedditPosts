@@ -6,8 +6,8 @@ const rl = readline.createInterface({
   output: process.stdout
 })
 
-rl.question('Enter a Subreddit... ', (answer) => {
-      axios.get("https://www.reddit.com/r/" + answer + ".json")
+rl.question('Enter a Subreddit... ', (sub) => {
+      axios.get("https://www.reddit.com/r/" + sub + ".json")
       .then((res) => {
         let posts = res.data.data.children
         let lim = posts.length
