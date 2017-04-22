@@ -41,6 +41,12 @@ data Data = Data {
 instance FromJSON Data
 instance ToJSON Data
 
+instance FromJSON Posts
+instance ToJSON Posts
+
+instance FromJSON Post
+instance ToJSON Post
+
 askForSub :: IO ()
 askForSub = do
 	Prelude.putStrLn "Enter a Subreddit"
@@ -48,7 +54,7 @@ askForSub = do
 	posts <- getPosts subreddit
 	print posts
 
-getPosts :: String -> IO [(Value, Maybe Value, Maybe Value)]
+getPosts :: String -> IO (Maybe Data)
 getPosts subreddit = do
 	let url = "https://www.reddit.com/r/" ++ subreddit ++ ".json"
 	r <- get url
@@ -57,16 +63,16 @@ getPosts subreddit = do
 	let f2 = "children" :: T.Text
 	let f3 = "title" :: T.Text
 	let dat = r ^. responseBody
-	let dec = decode dat :: Maybe Data
-	let fil = dec ^.. key f1 . _Array . traverse 
-                    . C.to (\o -> ( o ^?! key f2
-                                , o ^?  key f1
-                                , o ^?  key f3
-                                )
-                         )
+	let enc = encode (Data dat) :: Maybe Data
+	-- let fil = dec ^.. key f1 . _Array . traverse 
+ --                    . C.to (\o -> ( o ^?! key f2
+ --                                , o ^?  key f1
+ --                                , o ^?  key f3
+ --                                )
+ --                         )
 	-- let enc = encode fil
 	-- return enc
-	return $ fil
+	return $ enc
 --	let fil = posts .key f2 :: (Value -> f Value) -> c
 --	return posts
 --	return $ Char8.unpack (posts)
