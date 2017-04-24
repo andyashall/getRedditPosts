@@ -13,6 +13,8 @@ import Data.Aeson
 import Data.Aeson.Lens
 import Data.Aeson.Text
 import Data.Map as Map
+import Data.Vector as V
+import qualified Data.HashMap.Strict as HM
 import Data.ByteString.Lazy.Char8 as Char8
 import Data.Char (isSpace)
 import Text.HJson.Query
@@ -34,8 +36,8 @@ data Posts = Posts {
 } deriving (Show,G.Generic)
 
 data Data = Data {
-	kind :: T.Text
-  , data :: Posts
+	mate :: T.Text
+  , fell :: Posts
 } deriving (Show,G.Generic)
 
 instance FromJSON Data
@@ -52,15 +54,24 @@ askForSub = do
 	Prelude.putStrLn "Enter a Subreddit"
 	subreddit <- getLine
 	posts <- getPosts subreddit
+        -- firs <- makeArray posts
 	print posts
 
-getPosts :: String -> IO (Maybe Value)
+getPosts :: String -> IO (Maybe T.Text)
 getPosts subreddit = do
-	let url = "https://www.reddit.com/r/" ++ subreddit ++ ".json"
+	let url = "https://www.reddit.com/r/" Prelude.++ subreddit Prelude.++ ".json"
 	r <- get url
 	let f1 = "data" :: T.Text
 	let f2 = "children" :: T.Text
 	let f3 = "title" :: T.Text
-	let dat = r ^? responseBody . key f1 . key f2
-    -- let first = dat !!0
-	return $ dat
+	let dat = r ^? responseBody . key f1 . key f2 . _Array . traverse . key f1 . key f3 . _String 
+        return $ dat
+        -- titles <- HM.lookup "title" dat
+        -- case titles of
+        --     Just x -> return x
+        --     Nothing -> return "No titles"
+
+-- makeArray :: Maybe Value -> [Value]
+-- makeArray dat = do
+--     let fir = dat !!0
+--     return fir
