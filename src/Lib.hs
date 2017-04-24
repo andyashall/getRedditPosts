@@ -16,7 +16,7 @@ import Data.Map as Map
 import Data.Vector as V
 import qualified Data.HashMap.Strict as HM
 import Data.ByteString.Lazy.Char8 as Char8
-import Data.Char (isSpace)
+import Data.Char as Char (isSpace, toUpper)
 import Text.HJson.Query
 
 import qualified Data.Text as T
@@ -54,24 +54,19 @@ askForSub = do
 	Prelude.putStrLn "Enter a Subreddit"
 	subreddit <- getLine
 	posts <- getPosts subreddit
-        -- firs <- makeArray posts
 	print posts
 
 getPosts :: String -> IO (Maybe T.Text)
 getPosts subreddit = do
 	let url = "https://www.reddit.com/r/" Prelude.++ subreddit Prelude.++ ".json"
 	r <- get url
+    -- Filters for lens (the json keys)
 	let f1 = "data" :: T.Text
 	let f2 = "children" :: T.Text
 	let f3 = "title" :: T.Text
-	let dat = r ^? responseBody . key f1 . key f2 . _Array . traverse . key f1 . key f3 . _String 
-        return $ dat
-        -- titles <- HM.lookup "title" dat
-        -- case titles of
-        --     Just x -> return x
-        --     Nothing -> return "No titles"
-
--- makeArray :: Maybe Value -> [Value]
--- makeArray dat = do
---     let fir = dat !!0
---     return fir
+        -- This gets the posts array from the json
+        let getPosts = responseBody . key f1 . key f2
+	let dat = r ^? responseBody . key f1 . key f2 -- . nth 2 . key f1 . key f3 . _String 
+        -- let eachN = dat & each %~ T.toUpper
+        let tit = r ^? getPosts . nth 1 . key f1 . key f3 . _String
+        return $ tit
