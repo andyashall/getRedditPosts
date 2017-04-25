@@ -68,5 +68,21 @@ getPosts subreddit = do
         let getPosts = responseBody . key f1 . key f2
 	let dat = r ^? responseBody . key f1 . key f2 -- . nth 2 . key f1 . key f3 . _String 
         -- let eachN = dat & each %~ T.toUpper
-        let tit = r ^? getPosts . nth 1 . key f1 . key f3 . _String
-        return $ tit
+        let t1 = r ^? getPosts . nth 0 . key f1 . key f3 . _String
+        if (t1 == Just "Getting ready for Summer of Haskell 2017")
+            then do print "Getting ready for Summer of Haskell 2017"
+            else do print "Wot"
+        -- case t1 of
+        --     just a -> a
+        --     Nothing -> "nout"
+        let t2 = r ^? getPosts . nth 1 . key f1 . key f3 . _String
+        let t3 = r ^? getPosts . nth 2 . key f1 . key f3 . _String
+        let t4 = r ^? getPosts . nth 3 . key f1 . key f3 . _String
+        let t5 = r ^? getPosts . nth 4 . key f1 . key f3 . _String
+        print t1
+        print t2
+        print t3
+        print t4
+        print t5
+        -- let combined = t1
+        return $ t1
