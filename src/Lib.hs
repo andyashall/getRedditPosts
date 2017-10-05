@@ -30,8 +30,8 @@ getPosts subreddit = do
 
 printEm :: Int -> Response ByteString -> IO ()
 printEm n r
-    | n >= 10 = askForSub
-    | n < 10 = do
+    | n >= 25 = askForSub
+    | n < 25 = do
         let f1 = "data" :: T.Text
         let f2 = "children" :: T.Text
         let f3 = "title" :: T.Text
