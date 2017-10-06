@@ -55,7 +55,7 @@ printCom n r
         let f3 = "body" :: T.Text
         let getPosts = responseBody . nth 1 . key f1 . key f2
         let p = r ^? getPosts . nth n . key f1 . key f3 . _String
-        print $ show (n+1) Prelude.++ ". " Prelude.++ (strin p)
+        putStrLn $ id (show (n+1)) Prelude.++ ". " Prelude.++ (strin p)
         printCom (n+1) r
 
 printEm :: String -> Int -> Response ByteString -> IO ()
@@ -67,7 +67,7 @@ printEm sub n r
         let f3 = "title" :: T.Text
         let getPosts = responseBody . key f1 . key f2
         let p = r ^? getPosts . nth n . key f1 . key f3 . _String
-        print $ show (n+1) Prelude.++ ". " Prelude.++ (strin p)
+        putStrLn $ id (show (n+1)) Prelude.++ ". " Prelude.++ (strin p)
         printEm sub (n+1) r
 
 strin :: Maybe T.Text -> String
