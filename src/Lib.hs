@@ -61,21 +61,16 @@ printEm sub n r
         let f1 = "data" :: T.Text
         let getPosts = responseBody . key f1 . key "children"
         let p = r ^? getPosts . nth n . key f1 . key "title" . _String
-        let s = r ^? getPosts . nth n . key f1 . key "score" . _Integer
-        putStrLn $ id (show (n+1)) ++ ". " ++ (strin p) ++ "\n" ++ (show (asint s))
+        putStrLn $ id (show (n+1)) ++ ". " ++ (strin p) ++ "\n"
         printEm sub (n+1) r
 
 strin :: Maybe T.Text -> String
 strin Nothing = ""
 strin (Just x) = (T.unpack x)
 
-asint :: Maybe Integer -> Int
-asint Nothing = ""
-asint (Just x) = x
-
 printComments :: Int -> Response ByteString -> String -> IO()
 printComments n r s
     | s == "" = askForSub
     | otherwise = do
-        putStrLn $ id (show (n+1)) ++ ". " ++ s
+        putStrLn $ id (show (n+1)) ++ ". " ++ s ++ "\n"
         parseComments (n+1) r
