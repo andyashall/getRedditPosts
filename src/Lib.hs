@@ -28,10 +28,8 @@ openPost sub r = do
     ln <- getLine
     let n = read ln :: Int
     let f1 = "data" :: T.Text
-    let f2 = "children" :: T.Text
-    let f3 = "id" :: T.Text
-    let getPosts = responseBody . key f1 . key f2
-    let id = r ^? getPosts . nth (n-1) . key f1 . key f3 . _String
+    let getPosts = responseBody . key f1 . key "children"
+    let id = r ^? getPosts . nth (n-1) . key f1 . key "id" . _String
     getComments sub (strin id)
 
 getPosts :: String -> IO ()
@@ -51,10 +49,8 @@ parseComments n r
     | n >= 25 = askForSub
     | n < 25 = do
         let f1 = "data" :: T.Text
-        let f2 = "children" :: T.Text
-        let f3 = "body" :: T.Text
-        let getPosts = responseBody . nth 1 . key f1 . key f2
-        let p = r ^? getPosts . nth n . key f1 . key f3 . _String
+        let getPosts = responseBody . nth 1 . key f1 . key "children"
+        let p = r ^? getPosts . nth n . key f1 . key "body" . _String
         let s = (strin p)
         printComments n r s
 
@@ -63,16 +59,19 @@ printEm sub n r
     | n >= 25 = openPost sub r
     | n < 25 = do
         let f1 = "data" :: T.Text
-        let f2 = "children" :: T.Text
-        let f3 = "title" :: T.Text
-        let getPosts = responseBody . key f1 . key f2
-        let p = r ^? getPosts . nth n . key f1 . key f3 . _String
-        putStrLn $ id (show (n+1)) ++ ". " ++ (strin p)
+        let getPosts = responseBody . key f1 . key "children"
+        let p = r ^? getPosts . nth n . key f1 . key "title" . _String
+        let s = r ^? getPosts . nth n . key f1 . key "score" . _Integer
+        putStrLn $ id (show (n+1)) ++ ". " ++ (strin p) ++ "\n" ++ (show (asint s))
         printEm sub (n+1) r
 
 strin :: Maybe T.Text -> String
 strin Nothing = ""
 strin (Just x) = (T.unpack x)
+
+asint :: Maybe Integer -> Int
+asint Nothing = ""
+asint (Just x) = x
 
 printComments :: Int -> Response ByteString -> String -> IO()
 printComments n r s
