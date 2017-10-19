@@ -18,13 +18,13 @@ type Resp = Response (Map String Value)
 
 askForSub :: IO ()
 askForSub = do
-    Prelude.putStrLn "Enter a Subreddit"
+    putStrLn "Enter a Subreddit"
     sub <- getLine
     getPosts sub
 
 openPost :: String -> Response ByteString -> IO ()
 openPost sub r = do
-    Prelude.putStrLn "Enter a post number to open"
+    putStrLn "Enter a post number to open"
     ln <- getLine
     let n = read ln :: Int
     let f1 = "data" :: T.Text
@@ -36,13 +36,13 @@ openPost sub r = do
 
 getPosts :: String -> IO ()
 getPosts sub = do
-    let url = "https://www.reddit.com/r/" Prelude.++ sub Prelude.++ ".json"
+    let url = "https://www.reddit.com/r/" ++ sub ++ ".json"
     r <- get url
     printEm sub 0 r
 
 getComments :: String -> String -> IO ()
 getComments sub id = do
-    let url = "https://www.reddit.com/r/" Prelude.++ sub Prelude.++ "/comments/" Prelude.++ id Prelude.++ ".json"
+    let url = "https://www.reddit.com/r/" ++ sub ++ "/comments/" ++ id ++ ".json"
     r <- get url
     parseComments 0 r
 
@@ -67,7 +67,7 @@ printEm sub n r
         let f3 = "title" :: T.Text
         let getPosts = responseBody . key f1 . key f2
         let p = r ^? getPosts . nth n . key f1 . key f3 . _String
-        putStrLn $ id (show (n+1)) Prelude.++ ". " Prelude.++ (strin p)
+        putStrLn $ id (show (n+1)) ++ ". " ++ (strin p)
         printEm sub (n+1) r
 
 strin :: Maybe T.Text -> String
@@ -78,5 +78,5 @@ printComments :: Int -> Response ByteString -> String -> IO()
 printComments n r s
     | s == "" = askForSub
     | otherwise = do
-        putStrLn $ id (show (n+1)) Prelude.++ ". " Prelude.++ s
+        putStrLn $ id (show (n+1)) ++ ". " ++ s
         parseComments (n+1) r
