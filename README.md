@@ -1,4 +1,6 @@
-# Reddit Command line reader in Haskell
+# Reddit command line reader in Haskell
+
+Read post titles and comments in the command window
 
 ## Goal
 1. [x] Filter the response to show only the n / title of the posts 
